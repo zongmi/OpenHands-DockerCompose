@@ -1,3 +1,5 @@
+[简体中文](README.md) | [English](README.en.md)
+
 # OpenHands Docker Compose 部署
 
 这是一个完整的 OpenHands Docker Compose 部署方案，基于 [All-Hands-AI/OpenHands](https://github.com/All-Hands-AI/OpenHands) 项目，旨在提供一个易于管理、可扩展且功能强大的环境，适用于开发和生产。
@@ -96,6 +98,7 @@ make start
 │   ├── start.sh
 │   ├── stop.sh
 │   └── logs.sh
+├── trajectories/         # 存储代理执行任务的轨迹日志
 └── workspace/            # 代理的工作空间
 ```
 
