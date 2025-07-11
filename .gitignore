@@ -1,0 +1,23 @@
+# Local environment variables
+.env
+
+# Log files
+logs/
+*.log
+
+# Data and workspace
+data/
+workspace/
+trajectories/
+backups/
+
+# IDE and OS specific files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
