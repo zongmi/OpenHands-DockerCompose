@@ -1,6 +1,6 @@
 # OpenHands Docker Compose 部署
 
-这是一个完整的 OpenHands Docker Compose 部署方案，旨在提供一个易于管理、可扩展且功能强大的环境，适用于开发和生产。
+这是一个完整的 OpenHands Docker Compose 部署方案，基于 [All-Hands-AI/OpenHands](https://github.com/All-Hands-AI/OpenHands) 项目，旨在提供一个易于管理、可扩展且功能强大的环境，适用于开发和生产。
 
 ## ✨ 特性
 
