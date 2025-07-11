@@ -1,0 +1,41 @@
+# 生产环境配置
+version: '3.8'
+
+services:
+  openhands:
+    environment:
+      # 生产环境配置
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - SECURITY_CONFIRMATION_MODE=false
+      - SANDBOX_RUNTIME_BINDING_ADDRESS=127.0.0.1
+    ports:
+      - "127.0.0.1:3000:3000"
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    tmpfs:
+      - /tmp:noexec,nosuid,size=200m
+    labels:
+      - "com.openhands.env=production"
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: '4.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+
+  # 生产环境监控
+  watchtower:
+    image: containrrr/watchtower
+    container_name: openhands-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=3600
+    profiles:
+      - monitoring
+    restart: unless-stopped

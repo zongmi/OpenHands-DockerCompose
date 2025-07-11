@@ -1,0 +1,128 @@
+# OpenHands 配置文件
+# OpenHands 配置文件
+# 详细配置选项请参考: https://docs.all-hands.dev/modules/usage/configuration-options
+
+[core]
+# 默认代理
+default_agent = "CodeActAgent"
+
+# 运行时
+runtime = "docker"
+
+# 工作空间
+workspace_base = "./workspace"
+
+# 缓存目录
+cache_dir = "/tmp/cache"
+
+# 调试模式
+debug = false
+
+# 最大迭代次数
+max_iterations = 100
+
+# 最大预算
+max_budget_per_task = 10.0
+
+# JWT 密钥
+jwt_secret = "your-jwt-secret"
+
+# 轨迹保存路径
+save_trajectory_path = "./trajectories"
+
+[llm]
+# LLM 模型
+model = "claude-3-5-sonnet-20241022"
+
+# API 密钥 (通过环境变量设置)
+# api_key = ""
+
+# 基础 URL
+# base_url = ""
+
+# API 版本
+# api_version = ""
+
+# 最大输入令牌
+max_input_tokens = 0
+
+# 最大输出令牌
+max_output_tokens = 0
+
+# 温度
+temperature = 0.0
+
+# 超时时间
+timeout = 0
+
+# 重试配置
+num_retries = 8
+retry_min_wait = 15
+retry_max_wait = 120
+retry_multiplier = 2.0
+
+# 提示缓存
+caching_prompt = true
+
+# 禁用视觉功能
+disable_vision = false
+
+[agent]
+# 启用函数调用
+function_calling = true
+
+# 启用浏览
+enable_browsing = false
+
+# 启用 LLM 编辑器
+enable_llm_editor = false
+
+# 启用 Jupyter
+enable_jupyter = false
+
+# 启用历史截断
+enable_history_truncation = true
+
+# 启用提示扩展
+enable_prompt_extensions = true
+
+[sandbox]
+# 基础容器镜像
+base_container_image = "nikolaik/python-nodejs:python3.12-nodejs22"
+
+# 超时时间
+timeout = 120
+
+# 用户 ID
+user_id = 1000
+
+# 使用主机网络
+use_host_network = false
+
+# 运行时绑定地址
+runtime_binding_address = "0.0.0.0"
+
+# 启用自动 lint
+enable_auto_lint = false
+
+# 初始化插件
+initialize_plugins = true
+
+# 运行时额外依赖
+runtime_extra_deps = ""
+
+# 运行时启动环境变量
+[sandbox.runtime_startup_env_vars]
+# EXAMPLE_VAR = "example_value"
+
+[security]
+# 确认模式
+confirmation_mode = false
+
+# 安全分析器
+security_analyzer = ""
+
+[mcp]
+# MCP 服务器配置
+sse_servers = []
+stdio_servers = []

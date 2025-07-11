@@ -1,0 +1,135 @@
+# 主配置文件
+version: '3.8'
+
+services:
+  openhands:
+    image: docker.all-hands.dev/all-hands-ai/openhands:0.48
+    container_name: openhands-app
+    hostname: openhands
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+    env_file:
+      - .env
+    environment:
+      # 运行时配置
+      - SANDBOX_RUNTIME_CONTAINER_IMAGE=${SANDBOX_RUNTIME_CONTAINER_IMAGE}
+      - LOG_ALL_EVENTS=${LOG_ALL_EVENTS:-true}
+      
+      # LLM 配置
+      - LLM_MODEL=${LLM_MODEL}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_BASE_URL=${LLM_BASE_URL:-}
+      - LLM_API_VERSION=${LLM_API_VERSION:-}
+      
+      # 沙箱配置
+      - SANDBOX_VOLUMES=${SANDBOX_VOLUMES:-}
+      - SANDBOX_USER_ID=${SANDBOX_USER_ID:-1000}
+      - SANDBOX_TIMEOUT=${SANDBOX_TIMEOUT:-120}
+      - SANDBOX_RUNTIME_BINDING_ADDRESS=${SANDBOX_RUNTIME_BINDING_ADDRESS:-0.0.0.0}
+      
+      # 安全配置
+      - SECURITY_CONFIRMATION_MODE=${SECURITY_CONFIRMATION_MODE:-false}
+      
+      # 任务配置
+      - MAX_ITERATIONS=${MAX_ITERATIONS:-100}
+      - MAX_BUDGET_PER_TASK=${MAX_BUDGET_PER_TASK:-0.0}
+      
+      # 搜索配置
+      - SEARCH_API_KEY=${SEARCH_API_KEY:-}
+      
+      # 其他配置
+      - WORKSPACE_BASE=${WORKSPACE_BASE:-./workspace}
+      - JWT_SECRET=${JWT_SECRET:-}
+      
+    volumes:
+      # Docker socket (必需)
+      - /var/run/docker.sock:/var/run/docker.sock
+      
+      # OpenHands 数据目录
+      - openhands-data:/.openhands
+      
+      # 配置文件
+      - ./config.toml:/app/config.toml:ro
+      
+      # 日志目录
+      - ./logs:/app/logs
+      
+      # 工作空间 (可选，根据需要调整)
+      - ./workspace:/workspace
+      
+      # 自定义脚本目录 (可选)
+      - ./scripts:/app/scripts:ro
+      
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    
+    networks:
+      - openhands-network
+      
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+      
+    labels:
+      - "com.openhands.service=main"
+      - "com.openhands.version=0.48"
+      
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+
+  # 运行时镜像预拉取服务
+  runtime-init:
+    image: docker.all-hands.dev/all-hands-ai/runtime:0.48-nikolaik
+    container_name: openhands-runtime-init
+    command: ["echo", "Runtime image pulled and ready"]
+    profiles:
+      - init
+    networks:
+      - openhands-network
+
+  # 可选: Nginx 反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: openhands-nginx
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - openhands
+    networks:
+      - openhands-network
+    profiles:
+      - nginx
+    restart: unless-stopped
+
+networks:
+  openhands-network:
+    driver: bridge
+    name: openhands-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+
+volumes:
+  openhands-data:
+    driver: local
+    name: openhands-data
