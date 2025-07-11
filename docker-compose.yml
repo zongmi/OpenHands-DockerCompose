@@ -1,6 +1,4 @@
 # 主配置文件
-version: '3.8'
-
 services:
   openhands:
     image: docker.all-hands.dev/all-hands-ai/openhands:0.48
